@@ -32,10 +32,10 @@ class Loss(nn.Module):
         text_proj_image = torch.matmul(text_embeddings, image_norm.t())
 
         # normalize the true matching distribution
-        # labels_mask_norm = labels_mask.float() / labels_mask.float().norm(dim=1)
+        labels_mask_norm = labels_mask.float() / labels_mask.float().norm(dim=1)
 
         # 使用平方根作为归一化计算
-        labels_mask_norm = labels_mask.float() / torch.sqrt(labels_mask.float().norm(dim=1))
+        # labels_mask_norm = labels_mask.float() / torch.sqrt(labels_mask.float().norm(dim=1))
 
         # 将分母替换为全为 2 的张量
         # labels_mask_norm = labels_mask.float() / torch.full_like(labels_mask, 2.0).float().norm(dim=1)
