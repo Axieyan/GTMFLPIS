@@ -45,11 +45,45 @@ from scheduler import GradualWarmupScheduler # https://github.com/ildoonet/pytor
 #         return x1, x2, x3, x4
 
 #效率网
+# class ResNet_image_50(nn.Module):
+#     def __init__(self):
+#         super(ResNet_image_50, self).__init__()
+#         efficientnet = models.efficientnet_b4(True)
+#         efficientnet.features[6][0].block[1][0].stride = (1,1)
+#         self.base1 = nn.Sequential(
+#             efficientnet.features[0],
+#             efficientnet.features[1],
+#             efficientnet.features[2],
+#         )
+#         self.base2 = nn.Sequential(
+#             efficientnet.features[3],
+#         )
+#         self.base3 = nn.Sequential(
+#             efficientnet.features[4],
+#             efficientnet.features[5],
+#         )
+#         self.base4 = nn.Sequential(
+#             efficientnet.features[6],
+#             efficientnet.features[7],
+#             efficientnet.features[8],
+#         )
+#         self.pad3 = nn.Conv2d(136,1024,1)
+#         self.pad4 = nn.Conv2d(1536,2048,1)
+#     def forward(self,x):
+#         x1 = self.base1(x)
+#         x2 = self.base2(x1)
+#         x3 = self.base3(x2)
+#         x4 = self.base4(x3)
+#         x3 = self.pad3(x3)
+#         x4 = self.pad4(x4)
+#         return x1,x2,x3,x4
+
+# 效率网升级版本
 class ResNet_image_50(nn.Module):
     def __init__(self):
-        super(ResNet_image_50, self).__init__()
-        efficientnet = models.efficientnet_b4(True)
-        efficientnet.features[6][0].block[1][0].stride = (1,1)
+        super().__init__()
+        efficientnet = models.efficientnet_b0(True)
+        efficientnet.features[6][0].block[1][0].stride = (1, 1)
         self.base1 = nn.Sequential(
             efficientnet.features[0],
             efficientnet.features[1],
@@ -60,23 +94,25 @@ class ResNet_image_50(nn.Module):
         )
         self.base3 = nn.Sequential(
             efficientnet.features[4],
-            efficientnet.features[5],
+            efficientnet.features[5][:-1],
         )
+        self.feature3 = efficientnet.features[5][-1]
         self.base4 = nn.Sequential(
             efficientnet.features[6],
             efficientnet.features[7],
             efficientnet.features[8],
         )
-        self.pad3 = nn.Conv2d(136,1024,1)
-        self.pad4 = nn.Conv2d(1536,2048,1)
-    def forward(self,x):
+
+    def forward(self, x):
         x1 = self.base1(x)
         x2 = self.base2(x1)
-        x3 = self.base3(x2)
+        x3_o = self.base3(x2)
+        f3 = self.feature3.block[:2](x3_o)
+        x3 = self.feature3.block[2:](f3)
+        x3 = self.feature3.stochastic_depth(x3)
+        x3 += x3_o
         x4 = self.base4(x3)
-        x3 = self.pad3(x3)
-        x4 = self.pad4(x4)
-        return x1,x2,x3,x4
+        return x1, x2, f3, x4
 
 class TIPCB(pl.LightningModule):
     def __init__(self, args, val_len = None):

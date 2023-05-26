@@ -32,7 +32,16 @@ class Loss(nn.Module):
         text_proj_image = torch.matmul(text_embeddings, image_norm.t())
 
         # normalize the true matching distribution
-        labels_mask_norm = labels_mask.float() / labels_mask.float().norm(dim=1)
+        # labels_mask_norm = labels_mask.float() / labels_mask.float().norm(dim=1)
+
+        # 使用平方根作为归一化计算
+        labels_mask_norm = labels_mask.float() / torch.sqrt(labels_mask.float().norm(dim=1))
+
+        # 将分母替换为全为 2 的张量
+        # labels_mask_norm = labels_mask.float() / torch.full_like(labels_mask, 2.0).float().norm(dim=1)
+
+        # 不进行归一化：如果你认为归一化不是必需的或不适用于你的情况，你可以直接使用原始的labels_mask作为结果，而不进行归一化操作。
+        # labels_mask_norm = labels_mask.float()
 
         i2t_pred = F.softmax(image_proj_text, dim=1)
         i2t_loss = i2t_pred * (F.log_softmax(image_proj_text, dim=1) - torch.log(labels_mask_norm + self.epsilon)) # (4)
