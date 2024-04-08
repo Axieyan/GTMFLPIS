@@ -6,7 +6,7 @@ import time
 
 assert 'CUDAExecutionProvider' in onnxruntime.get_available_providers()
 
-ort_session = onnxruntime.InferenceSession("/aicity/my_TIPCB/best_th.onnx", providers=["CUDAExecutionProvider"])
+ort_session = onnxruntime.InferenceSession("/xy/my_GTMFLPIS/best_th.onnx", providers=["CUDAExecutionProvider"])
 for i in ort_session.get_inputs():
     print(i.name)
 

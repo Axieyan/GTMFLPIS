@@ -35,7 +35,7 @@ parser.add_argument('--num_epoches', type=int, default=80)
 parser.add_argument('--epsilon', type=float, default=1e-8)
 
 # the root of the data folder
-parser.add_argument("--image_root_path", type=str, default="/aicity/data/CUHK-PEDES/imgs")
+parser.add_argument("--image_root_path", type=str, default="/xy/data/CUHK-PEDES/imgs")
 
 parser.add_argument('--adam_lr', type=float, default=0.003, help='the learning rate of adam')
 parser.add_argument('--wd', type=float, default=0.00004)
@@ -52,10 +52,10 @@ args = parser.parse_args()
 
 
 # ------------------------ test dataset ------------------------
-# with open("/aicity/TIPCB/data/BERT_en_original/BERT_id_train_64_new.npz", "rb") as f:
+# with open("/xy/GTMFLPIS/data/BERT_en_original/BERT_id_train_64_new.npz", "rb") as f:
 #     train = pickle.load(f)
 
-# with open("/aicity/TIPCB/data/BERT_en_original/BERT_id_val_64_new.npz", "rb") as f:
+# with open("/xy/GTMFLPIS/data/BERT_en_original/BERT_id_val_64_new.npz", "rb") as f:
 #     val = pickle.load(f)
 
 # train_dataset = NPZ_data(train, args)
@@ -83,17 +83,18 @@ checkpoint_callback = ModelCheckpoint(
 pl.seed_everything(0)
 tb_logger = pl_loggers.TensorBoardLogger(args.log_dir)
 
-if args.language == "en":
-    tokenizer = AutoTokenizer.from_pretrained("roberta-base", model_max_length=args.max_length)
-    train_list, val_list = split("/aicity/data/CUHK-PEDES/caption_all.json")
+# if args.language == "en":
+if args.language == "en and ch":
+    tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/distiluse-base-multilingual-cased-v2", model_max_length=args.max_length)
+    train_list, val_list = split("/xy/data/CUHK-PEDES/caption_all.json")
     train_dataset = TIPCB_data(train_list, tokenizer, args)
     val_dataset = TIPCB_data(val_list, tokenizer, args, train=False)
 # elif # removed for Thai language
 
-# with open("/aicity/TIPCB/data/BERT_en_original/BERT_id_train_64_new.npz", "rb") as f:
+# with open("/xy/GTMFLPIS/data/BERT_en_original/BERT_id_train_64_new.npz", "rb") as f:
 #     train = pickle.load(f)
 
-# with open("/aicity/TIPCB/data/BERT_en_original/BERT_id_test_64_new.npz", "rb") as f:
+# with open("/xy/GTMFLPIS/data/BERT_en_original/BERT_id_test_64_new.npz", "rb") as f:
 #     val = pickle.load(f)
 
 # train_dataset = NPZ_data(train, args)

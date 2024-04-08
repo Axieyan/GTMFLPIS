@@ -19,7 +19,7 @@ def split(json_path):
     group_by_id = dict()
     for record in caption_all:
         # check if image file doesn't exist
-        if not os.path.exists(os.path.join("/aicity/data/CUHK-PEDES/imgs", record["file_path"])):
+        if not os.path.exists(os.path.join("/xy/data/CUHK-PEDES/imgs", record["file_path"])):
             continue
         # if record["file_path"].split("/")[0] not in ["test_query", "train_query"]:
         #     continue
@@ -59,7 +59,7 @@ class TIPCB_data(Dataset):
         item = self.data[index] # dict of {id, file_path, caption}
 
         # read image and transform
-        img = Image.open(os.path.join("/aicity/data/CUHK-PEDES/imgs", item["file_path"]))
+        img = Image.open(os.path.join("/xy/data/CUHK-PEDES/imgs", item["file_path"]))
         if self.train:
             img = self.transform_train(img)
         else:
@@ -166,11 +166,11 @@ if __name__ == "__main__":
     parser.add_argument('--epsilon', type=float, default=1e-8)
 
     # the root of the data folder
-    parser.add_argument("--image_root_path", type=str, default="/aicity/data/CUHK-PEDES/imgs")
+    parser.add_argument("--image_root_path", type=str, default="/xy/data/CUHK-PEDES/imgs")
 
     args = parser.parse_args()
 
-    with open("/aicity/TIPCB/data/BERT_en_original/BERT_id_train_64_new.npz", "rb") as f:
+    with open("/xy/GTMFLPIS/data/BERT_en_original/BERT_id_train_64_new.npz", "rb") as f:
         train = pickle.load(f)
 
     train_dataset = train_dataset = NPZ_data(train, args)

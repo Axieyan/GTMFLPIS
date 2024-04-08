@@ -9,7 +9,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning import loggers as pl_loggers
 from transformers import BertModel, RobertaModel
-from CMPM import Loss
+from loss import Loss
 import torch.optim as optim
 from test_utils import test_map
 from scheduler import GradualWarmupScheduler # https://github.com/ildoonet/pytorch-gradual-warmup-lr
@@ -125,10 +125,11 @@ class TIPCB(pl.LightningModule):
         self.compute_loss = Loss(args)
 
         if args.language == "en":
-            self.text_embed = RobertaModel.from_pretrained("/aicity/finetune_LM_WCB/models/en-roberta")
-        elif args.language == "th":
-            self.text_embed = RobertaModel.from_pretrained("airesearch/wangchanberta-base-att-spm-uncased")
-            # self.text_embed = RobertaModel.from_pretrained("/aicity/finetune_LM_WCB/models/th2")
+            self.text_embed = RobertaModel.from_pretrained("/xy/en/google-bert/bert-base-uncased")
+        # elif args.language == "ch":
+        elif args.language == "en and ch":
+            self.text_embed = RobertaModel.from_pretrained("xy/ch/sentence-transformers/distiluse-base-multilingual-cased-v2")
+            # self.text_embed = RobertaModel.from_pretrained("/xy/ch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
         # self.text_embed.train()
         self.text_embed.eval()
         # self.BERT = True
