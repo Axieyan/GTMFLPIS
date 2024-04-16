@@ -31,6 +31,7 @@ class Bottleneck(nn.Module):
         self.bn3 = norm_layer(planes)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
+        # self.stride = stride
         self.stride = stride
 
     def forward(self, x):
